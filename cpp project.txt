@@ -1,0 +1,178 @@
+#include<stdio.h>
+#include<iostream.h>
+#include<stdlib.h>
+#include<fstream.h>
+#include<string.h>
+#include<conio.h>
+//using namespace std;
+class bank
+{
+public:
+	char name[20],accno[10];
+	int age,inamount,amt,i;
+	fstream personal,trans,amount,file;
+public:
+	bank()
+	{
+	int i=1;
+	file.open("inc.csv",ios::in);
+	file >> i;
+	file.close();
+//	cout << "i  = " << i << endl;
+      //	accno=(char*)malloc(4);
+	sprintf(accno,"%d",i);
+	}
+
+void createacc()
+{
+	int temp=0,m;
+	cout<<"enter your name\n";
+	cin.getline(name,20);
+	cout<<"enter your age\n";
+	cin>>age;
+	cout<<"enter your initial amount\n";
+	cin>>inamount;
+	cin.ignore();
+
+	file.open("inc.txt",ios::in);
+	file >> i;
+	file.close();
+
+
+	personal.open("info.txt",ios::app);
+	personal<<name<<" "<<age<<" "<<inamount<<" " << i << "\n";
+	personal.close();
+
+	sprintf(accno, "%d",i);
+	cout<<"your acc no is"<<accno;
+	trans.open(strcat(accno,".txt"),ios::out);
+	trans<<inamount;
+	trans.close();
+
+	i++;
+
+	file.open("inc.txt",ios::out);
+	file << i;
+	file.close();
+
+}
+void addmoney()
+{
+	cout<<"enter your account no\n";
+	cin>>i;
+	sprintf(accno, "%d",i);
+	cout<<"enter the amount you want to add";
+	cin>>amt;
+	trans.open(strcat(accno,".txt"),ios::app);
+       //	trans.seekp(ios::end);
+	trans<<"\n"<<amt;
+	trans.close();
+}
+void withdraw()
+{
+	 char accno[10];
+	cout<<"enter your account no\n";
+	cin>>i;
+	sprintf(accno, "%d",i);
+	int bal = balance(accno);
+	cout<<"enter the amount you want to withdraw\n";
+	cin>>amt;
+	if(amt<bal)
+	{
+	trans.open(accno,ios::app);
+	trans<<-amt << " ";
+	trans.close();
+	cout << "you current bal = " << bal -amt<<endl;
+	}
+	else
+	cout<<"not enough balance";
+
+}
+int balance(int k)
+{
+      char accno[10];
+	sprintf(accno, "%d",k);
+	cout<<accno;
+	int z,amount=0;
+	strcat(accno,".txt");
+	cout<<accno;
+	fstream bal;
+	bal.open(accno,ios::in);
+	if(!bal)
+	{
+	cout<<"File is not ready";
+	}
+	else
+	{
+	while(!bal.eof())
+	{
+		bal>>z;
+		amount =amount+int(z);
+
+	}
+		amount=amount-z;
+		cout<<"your available balance is\n"<<amount;
+
+	bal.close();
+	}
+	return 0;
+}
+int balance(char a[10])
+{
+	//char a[10];
+      // strcpy(a,accno);
+	//accno=&a;
+	int z,amount=0;
+	ifstream bal(strcat(a,".txt"));
+	while(!bal.eof())
+	{
+		bal >>z;
+		amount =amount+int(z);
+
+	}
+		amount=amount-z;
+		cout<<"your available balance is\n"<<amount;
+
+	bal.close();
+	return amount;
+}
+
+};
+void main()
+{
+	bank b;
+	int choice,v, temp;
+    while(1)
+    {
+	clrscr();
+	cout<<"enter your choice \n";
+	cout<<" 1:create new account\n 2:add money\n3:withdraw money\n4:balance information\n5:exit";
+	cin>>choice;
+	cin.ignore();
+	switch(choice)
+	{
+	case 1 : b.createacc();
+		 break;
+	case 2 : b.addmoney();
+		 break;
+	case 3 : b.withdraw();
+		 break;
+	case 4 :
+		cout<<"enter your account no\n";
+		cin>>temp;
+		b.balance(temp);
+		 break;
+	case 5:
+		exit(0);
+	default:cout<<"invalid input";
+}
+	cout<<"\n***********thank you for banking with us*********to continue press 9 ";
+	cin>>v;
+	if(v!=9)
+	break;
+	else
+	continue;
+}
+     //	return 0;
+     getch();
+}
